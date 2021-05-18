@@ -85,7 +85,7 @@ def preprocess(textdata):
 def load_models():
     # Load the vectoriser.
 
-    file = open('NLP_models/vectoriser-ngram-(1,2).pickle', 'rb')
+    file = open('NLP_models/vectorizer-ngram-(1,2).pickle', 'rb')
     vectorizer = pickle.load(file)
     file.close()
     # Load the LR Model.

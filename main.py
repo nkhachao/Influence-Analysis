@@ -1,3 +1,5 @@
+import networkx as nx
+
 from Crawler import *
 from Grapher import *
 from UserManager import *
@@ -31,12 +33,13 @@ def string_to_int(string):
 
 
 # ------------------------------------ LETS GO ------------------------------------
+keywords = ['Biden']
 
 unfinished = True
 
+# Data collection
 while unfinished:
     try:
-        keywords = ['Tensorflow OR Pytorch OR Neural Network OR Deep Learning']
         scan_count = 5
 
         previous_session = load_user_discovery_session()
@@ -85,8 +88,6 @@ while unfinished:
             discovered_users = []
 
         # ----- Data collection completed -----
-        UsersGraph = create_graph(following_dict)
-        show_graph(UsersGraph)
         unfinished = False
 
     except:
@@ -94,3 +95,29 @@ while unfinished:
         print("problem occurred. sleeping")
         time.sleep(180)
         print("program restarted")
+
+
+following_dict = load_data("following_dict")
+opinion_dict = load_data("opinion_dict")
+
+all_users = list(following_dict.keys()) + [item for sublist in following_dict.values() for item in sublist]
+negative_users = filter(lambda x: opinion_dict[x] <= 0.64, all_users)
+
+Graph = create_graph(following_dict)
+Negative_graph = Graph.subgraph(negative_users)
+
+show_graph(Graph)
+show_graph(Negative_graph)
+
+print("Most influential users talking about", keywords)
+ranks = rank(Graph)
+for i in range(5):
+    user = list(ranks.keys())[i]
+    print(user,ranks[user])
+
+print("--------------")
+print("Most influential users who are negative about about", keywords)
+ranks = rank(Negative_graph)
+for i in range(5):
+    user = list(ranks.keys())[i]
+    print(user, ranks[user])
